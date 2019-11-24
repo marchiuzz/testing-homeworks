@@ -7,28 +7,80 @@ use PHPUnit\Framework\TestCase;
 
 class NumberFormatterTest extends TestCase
 {
+    public function providerPositiveNumbers(): array
+    {
+        return [
+            'zero' => ["0", 0],
+            'millions' => ["1.00M", 999500],
+            'thousands' => ["124K", 123654.89],
+            'thousand' => ["27 534", 27533.78],
+            'lessThanThousand' => ["66.67", 66.6666]
+        ];
+    }
+
+
+    /**
+     * @dataProvider providerPositiveNumbers
+     * @param $expectedResults
+     * @param $givenNumber
+     */
+    public function testPositiveNumbersFormatter($expectedResults, $givenNumber)
+    {
+        $numberFormatter = new NumberFormatter($givenNumber);
+        $this->assertEquals($expectedResults, $numberFormatter->NumberFormatter());
+    }
+
+    public function providerNegativeNumbers(): array
+    {
+        return [
+            'zero' => ["0", 0],
+            'millions' => ["-1.00M", -999500],
+            'thousands' => ["-124K", -123654.89],
+            'thousand' => ["-27 534", -27533.78],
+            'lessThanThousand' => ["-66.67", -66.6666]
+        ];
+    }
+
+
+    /**
+     * @dataProvider providerNegativeNumbers
+     * @param $expectedResult
+     * @param $givenNumber
+     */
+    public function testNegativeNumbersFormatter($expectedResult, $givenNumber)
+    {
+        $numberFormatter = new NumberFormatter($givenNumber);
+        $this->assertEquals($expectedResult, $numberFormatter->NumberFormatter());
+    }
+
+
     public function testRoundToMillion()
     {
-        $this->assertEquals('-1.00M', NumberFormatter::NumberFormatter(-999500));
+        $numberFormatter = new NumberFormatter(-999500);
+        $this->assertEquals('-1.00M', $numberFormatter->NumberFormatter());
     }
 
     public function testRoundToHundredThousandsOrMore()
     {
-        $this->assertEquals('-124K', NumberFormatter::NumberFormatter(-123654.89));
+        $numberFormatter = new NumberFormatter(-123654.89);
+        $this->assertEquals('-124K', $numberFormatter->NumberFormatter());
     }
 
     public function testRoundToThousandOrMoreToInt()
     {
-        $this->assertEquals('27 534', NumberFormatter::NumberFormatter(27533.78));
+        $numberFormatter = new NumberFormatter(27533.78);
+        $this->assertEquals('27 534', $numberFormatter->NumberFormatter());
     }
 
     public function testRoundToLessThanThousand()
     {
-        $this->assertEquals('-1 000', NumberFormatter::NumberFormatter(-999.9999));
+        $numberFormatter = new NumberFormatter(-999.9999);
+        $this->assertEquals('-1 000', $numberFormatter->NumberFormatter());
     }
 
     public function testZero()
     {
-        $this->assertEquals(0,NumberFormatter::NumberFormatter(0));
+        $numberFormatter = new NumberFormatter(0);
+        $this->assertEquals(0, $numberFormatter->NumberFormatter());
     }
 }

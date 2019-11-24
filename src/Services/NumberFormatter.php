@@ -13,23 +13,21 @@ class NumberFormatter implements NumberFormatterInterface
         $this->number = $number;
     }
 
-    static public function NumberFormatter(float $number): string
+    public function NumberFormatter(): string
     {
-        if($number == 0){
-            return 0;
-        }
-
-        $numberFormatter = new self($number);
+        $number = $this->number;
 
         switch ($number){
-            case ($number >= 999500 || $number <= -999500) :
-                return $numberFormatter->roundToMillions();
-            case (($number >= 99950 && $number < 999500) || ($number <= -99950 && $number > -999500)):
-                return $numberFormatter->roundToHundredThousandsOrMore();
+            case ($number >= 0 && $number < 999.9999) || ($number < 0 && $number > -999.9999):
+                return $this->roundToLessThanThousand();
             case (($number >= 999.9999 && $number < 99950) || ($number <= -999.9999 && $number > -99950)):
-                return $numberFormatter->roundToThousandOrMoreToInt();
+                return $this->roundToThousandOrMoreToInt();
+            case (($number >= 99950 && $number < 999500) || ($number <= -99950 && $number > -999500)):
+                return $this->roundToHundredThousandsOrMore();
+            case ($number >= 999500 || $number <= -999500) :
+                return $this->roundToMillions();
             default:
-                return $numberFormatter->roundToLessThanThousand();
+                return 0;
         }
     }
 
@@ -37,7 +35,6 @@ class NumberFormatter implements NumberFormatterInterface
     {
         $number = $this->number/1000000;
         $result = number_format($number, 2, ".", "")."M";
-        var_dump($result);
         return $result;
     }
 
@@ -45,7 +42,6 @@ class NumberFormatter implements NumberFormatterInterface
     {
         $numberr = $this->number/1000;
         $result = number_format($numberr, 0, ".", "")."K";
-        var_dump($result);
         return $result;
     }
 
@@ -53,7 +49,6 @@ class NumberFormatter implements NumberFormatterInterface
     {
         $numberr = $this->number;
         $result = number_format($numberr, 0, "", " ");
-        var_dump($result);
         return $result;
     }
 
@@ -61,7 +56,6 @@ class NumberFormatter implements NumberFormatterInterface
     {
         $numberr = $this->number;
         $result = number_format($numberr, 2, ".", "") + 0;
-        var_dump($result);
         return $result;
     }
 }
